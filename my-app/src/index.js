@@ -2,27 +2,36 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Square extends React.Component {
-    // allows us to store the state of the Square
-    // constructor(props) {    
-    //     super(props);   // parent class is the Board component
-    //     this.state = {
-    //         value : null,
-    //     };
-    // }
+// class Square extends React.Component {
+//     // allows us to store the state of the Square
+//     // constructor(props) {    
+//     //     super(props);   // parent class is the Board component
+//     //     this.state = {
+//     //         value : null,
+//     //     };
+//     // }
 
-    render() {
+//     render() {
+//       return (
+//         // When this button is clicked, we re-render given the props
+//         // and displays it by having {} within the button tag
+//         <button 
+//          className="square" 
+//          onClick={() => this.props.onClick()} // sets up a click event listener 
+//         >
+//           {this.props.value}    
+//         </button>
+//       );
+//     }
+//   }
+
+  function Square(props) {
       return (
-        // When this button is clicked, we re-render given the props
-        // and displays it by having {} within the button tag
-        <button 
-         className="square" 
-         onClick={() => this.props.onClick()} // sets up a click event listener 
-        >
-          {this.props.value}    
-        </button>
+          <button className="square" onClick={props.onClick}>
+              {props.value}
+          </button>
+
       );
-    }
   }
   
   class Board extends React.Component {

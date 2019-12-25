@@ -12,14 +12,6 @@ import './index.css';
   }
   
   class Board extends React.Component {
-    // storing Game state within the Board
-    constructor(props) {
-        super(props); // parent class is the Game component
-        this.state = {
-            squares : Array(9).fill(null),
-            xIsNext : true,
-        };
-    }
 
     handleClick(i) {
         // using slice(), we can avoid mutation
@@ -41,25 +33,24 @@ import './index.css';
     renderSquare(i) {
       return (
           <Square 
-           value={this.state.squares[i]}
-           onClick = {() => this.handleClick(i)}
+            value={this.props.squares[i]}
+            onClick = {() => this.props.onClick(i)}
           />
-          );
+      );
     }
   
     render() {
-      const winner = calculateWinner(this.state.squares);
-      let status;
-      // if the winner is NOT null, a winner exists
-      if (winner) {
-        status = 'Winner: ' + winner;
-      } else {
-        status = 'Next player: ' + (this.state.xIsNext ? 'X' : '0');
-      }
+      // const winner = calculateWinner(this.state.squares);
+      // let status;
+      // // if the winner is NOT null, a winner exists
+      // if (winner) {
+      //   status = 'Winner: ' + winner;
+      // } else {
+      //   status = 'Next player: ' + (this.state.xIsNext ? 'X' : '0');
+      // }
   
       return (
         <div>
-          <div className="status">{status}</div>
           <div className="board-row">
             {this.renderSquare(0)}
             {this.renderSquare(1)}
@@ -81,14 +72,65 @@ import './index.css';
   }
   
   class Game extends React.Component {
+    /* because we are looking back at the history of 
+       different board states, we need to store the 
+       history array in the Game component
+    */
+
+    constructor(props) {
+      super(props);
+      this.state = {
+        history : [{
+          squares : Array(9).fill(null),
+        }],
+        xIsNext : true,
+      };
+    }
+
+    handleClick(i) {
+      // using slice(), we can avoid mutation
+      const history = this.state.history;
+      const currBoard = history[history.length - 1];
+      const squares = currBoard.squares.slice(); // creates a copy of squares 
+
+      // if a winner exists OR a square has already been clicked, a user's click will be IGNORED
+      if(calculateWinner(squares) || squares[i]) {
+        return;
+      }
+
+      squares[i] = this.state.xIsNext ? 'X' : 'O';
+      this.setState({
+        // we use CONCAT instead of push() for arrays because it doesn't mutate original array
+        history : history.concat([{
+          squares : squares,
+        }]),
+        xIsNext : !this.state.xIsNext,
+      });
+    }
+
+
     render() {
+      const history = this.state.history;
+      const currBoard = history[history.length - 1]; // accesses the most recent board in history
+      const winner = calculateWinner(currBoard.squares); // check if there's a winner, in curr board
+
+      let status;
+      if (winner) {
+        status = 'Winner: ' + winner;
+      } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      }
+
       return (
         <div className="game">
           <div className="game-board">
-            <Board />
+            <Board 
+              squares = {currBoard.squares}
+              onClick = {(i) => this.handleClick(i)}
+            />
           </div>
           <div className="game-info">
-            <div>{/* status */}</div>
+            <div>{status}</div>
             <ol>{/* TODO */}</ol>
           </div>
         </div>

@@ -40,14 +40,18 @@ import './index.css';
         super(props); // parent class is the Game component
         this.state = {
             squares : Array(9).fill(null),
+            xIsNext : true,
         };
     }
 
     handleClick(i) {
         // using slice(), we can avoid mutation
         const squares = this.state.squares.slice(); // creates a copy of squares 
-        squares[i] = 'X';
-        this.setState({squares : squares});
+        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        this.setState({
+          squares : squares,
+          xIsNext : !this.state.xIsNext,
+        });
     }
 
     // function that we call to re-render the square with a value
@@ -61,7 +65,7 @@ import './index.css';
     }
   
     render() {
-      const status = 'Next player: X';
+      const status = 'Next player: ' + (this.state.xIsNext ? 'X' : '0');
   
       return (
         <div>

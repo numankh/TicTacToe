@@ -12,23 +12,6 @@ import './index.css';
   }
   
   class Board extends React.Component {
-
-    handleClick(i) {
-        // using slice(), we can avoid mutation
-        const squares = this.state.squares.slice(); // creates a copy of squares 
-
-        // if a winner exists OR a square has already been clicked, a user's click will be IGNORED
-        if(calculateWinner(squares) || squares[i]) {
-          return;
-        }
-
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-          squares : squares,
-          xIsNext : !this.state.xIsNext,
-        });
-    }
-
     // function that we call to re-render the square with a value
     renderSquare(i) {
       return (
@@ -81,15 +64,24 @@ import './index.css';
       super(props);
       this.state = {
         history : [{
-          squares : Array(9).fill(null),
+          squares : Array(9).fill(null)
         }],
-        xIsNext : true,
+        stepNumber : 0,
+        xIsNext : true
       };
+    }
+
+    jumpTo(step) {
+      this.setState({ 
+        stepNumber : step,
+        xIsNext : (step % 2) === 0 // set xIsNext to TRUE, if the number we're changing to is even
+      });
     }
 
     handleClick(i) {
       // using slice(), we can avoid mutation
-      const history = this.state.history;
+      // this removes future history when going back in time 
+      const history = this.state.history.slice(0,this.state.stepNumber + 1); 
       const currBoard = history[history.length - 1];
       const squares = currBoard.squares.slice(); // creates a copy of squares 
 
@@ -102,8 +94,9 @@ import './index.css';
       this.setState({
         // we use CONCAT instead of push() for arrays because it doesn't mutate original array
         history : history.concat([{
-          squares : squares,
+          squares : squares
         }]),
+        stepNumber : history.length, // this allows us not to be stuck on the same move 
         xIsNext : !this.state.xIsNext,
       });
     }
@@ -111,7 +104,7 @@ import './index.css';
 
     render() {
       const history = this.state.history;
-      const currBoard = history[history.length - 1]; // accesses the most recent board in history
+      const currBoard = history[this.state.stepNumber]; // accesses the most recent board in history
       const winner = calculateWinner(currBoard.squares); // check if there's a winner, in curr board
 
       // list of buttons that map to previous boards
@@ -120,7 +113,7 @@ import './index.css';
           'Go to move #' + move : 
           'Go to game start';
          return (
-           <li>
+           <li key={move}>
              <button onClick={() => this.jumpTo(move)}> {desc} </button>
            </li>
          )

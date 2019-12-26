@@ -68,7 +68,7 @@ import './index.css';
         }],
         stepNumber : 0,
         xIsNext : true,
-        index : [{}]
+        index : [{}]  // array of indeces that have been clicked
       };
     }
 
@@ -82,10 +82,12 @@ import './index.css';
     // Given the index of the current board, change the square and adjust states accordingly
     handleClick(i) {
       // using slice(), we can avoid mutation
-      // this removes future history when going back in time 
+      // the slice below removes future history when going back in time 
       const history = this.state.history.slice(0,this.state.stepNumber + 1); 
       const currBoard = history[history.length - 1];
       const squares = currBoard.squares.slice(); // creates a copy of squares 
+
+      // the slice removes future indeces when going back in time 
       const index = this.state.index.slice(0,this.state.stepNumber + 1);
 
       // if a winner exists OR a square has already been clicked, a user's click will be IGNORED
@@ -101,7 +103,7 @@ import './index.css';
         }]),
         stepNumber : history.length, // this allows us not to be stuck on the same move 
         xIsNext : !this.state.xIsNext,
-        index : index.concat([i])
+        index : index.concat([i]) // adds the index that has been clicked to this array
       });
     }
 
@@ -113,6 +115,7 @@ import './index.css';
 
       // list of buttons that map to previous boards
       const moves = history.map((step,move) => {
+        // using the key for the LIST OF BUTTONS, we can access the index that was clicked in the index array
         const desc = move ? 
           'Go to move #' + move + ' at ' + getCoordinates(this.state.index[move]): 
           'Go to game start';
@@ -174,6 +177,7 @@ import './index.css';
     return null;
   }
 
+  // helper function that takes an index (0-9), and returns the (col,row) coordinate
   function getCoordinates(index) {
     let r = Math.floor(index / 3);
     let c = Math.floor(index % 3);

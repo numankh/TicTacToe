@@ -21,34 +21,26 @@ import './index.css';
           />
       );
     }
-  
+
+    renderRow(i) {
+      var j = 0;
+      for(; j < 3; j++) {
+        return (
+          <div className="board-row">
+            {this.renderSquare((3*i)+j)}
+            {this.renderSquare((3*i)+j+1)}
+            {this.renderSquare((3*i)+j+2)}
+          </div>
+        );
+      }
+    }
+
     render() {
-      // const winner = calculateWinner(this.state.squares);
-      // let status;
-      // // if the winner is NOT null, a winner exists
-      // if (winner) {
-      //   status = 'Winner: ' + winner;
-      // } else {
-      //   status = 'Next player: ' + (this.state.xIsNext ? 'X' : '0');
-      // }
-  
       return (
         <div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
+          {this.renderRow(0)}
+          {this.renderRow(1)}
+          {this.renderRow(2)}
         </div>
       );
     }

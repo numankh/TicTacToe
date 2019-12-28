@@ -72,6 +72,9 @@ import './index.css';
       };
     }
 
+    /*
+        Helper function that changes to the board state given the corresponding history button
+    */
     jumpTo(step) {
       this.setState({ 
         stepNumber : step,
@@ -116,9 +119,15 @@ import './index.css';
       // list of buttons that map to previous boards
       const moves = history.map((step,move) => {
         // using the key for the LIST OF BUTTONS, we can access the index that was clicked in the index array
-        const desc = move ? 
+        let desc = move ? 
           'Go to move #' + move + ' at ' + getCoordinates(this.state.index[move]): 
           'Go to game start';
+        
+        // bolds the move button that is either the current move or has been clicked on
+        if (this.state.stepNumber === move) {
+          desc = <b> {desc} </b>;
+        }
+
          return (
            <li key={move}>
              <button onClick={() => this.jumpTo(move)}> {desc} </button>
